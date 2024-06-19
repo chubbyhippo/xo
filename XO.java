@@ -9,7 +9,9 @@ public class XO {
         var folder = new File(zipFileAbsolutePath.substring(0, zipFileAbsolutePath.lastIndexOf(".")));
         runCommand("unzip", "-a", zipFileAbsolutePath);
         Stream.of("build.gradle.kts", "pom.xml", "build.gradle")
-                .filter(it -> new File(folder, it).exists())
+                .map(it -> new File(folder, it))
+                .filter(File::exists)
+                .map(it -> new String[]{"idea", it.getAbsolutePath()})
                 .forEach(XO::runCommand);
     }
 

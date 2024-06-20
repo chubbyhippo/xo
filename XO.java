@@ -8,14 +8,7 @@ public class XO {
         var zipFileAbsolutePath = zipFile.getAbsolutePath();
         var folder = new File(zipFileAbsolutePath.substring(0, zipFileAbsolutePath.lastIndexOf(".")));
         runCommand("unzip", zipFileAbsolutePath);
-        String idea;
-        if (System.getProperty("os.name").contains("Windows")) {
-            idea = "idea.cmd";
-        } else {
-            idea = "idea";
-        }
-
-
+        var idea = System.getProperty("os.name").contains("Windows") ? "idea.cmd" : "idea";
         Stream.of("build.gradle.kts", "pom.xml", "build.gradle")
                 .map(it -> new File(folder, it))
                 .filter(File::exists)

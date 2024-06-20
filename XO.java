@@ -6,12 +6,22 @@ public class XO {
     public static void main(String... args) {
         var zipFile = new File(args[0]);
         var zipFileAbsolutePath = zipFile.getAbsolutePath();
+        System.out.println(zipFileAbsolutePath);
         var folder = new File(zipFileAbsolutePath.substring(0, zipFileAbsolutePath.lastIndexOf(".")));
-        runCommand("unzip", "-a", zipFileAbsolutePath);
+        System.out.println(folder.getAbsolutePath());
+        runCommand("unzip", zipFileAbsolutePath);
+        String idea;
+        if (System.getProperty("os.name").contains("Windows")) {
+            idea = "idea.cmd";
+        } else {
+            idea = "idea";
+        }
+
         Stream.of("build.gradle.kts", "pom.xml", "build.gradle")
                 .map(it -> new File(folder, it))
                 .filter(File::exists)
-                .map(it -> new String[]{"idea", it.getAbsolutePath()})
+                .peek(file -> System.out.println(file.getAbsolutePath()))
+                .map(it -> new String[]{idea, it.getAbsolutePath()})
                 .forEach(XO::runCommand);
     }
 
@@ -19,8 +29,10 @@ public class XO {
         try {
             new ProcessBuilder().command(args).inheritIO().start().waitFor();
         } catch (InterruptedException e) {
+            e.printStackTrace();
             Thread.currentThread().interrupt();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
